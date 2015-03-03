@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Nito.Async
 {
@@ -61,18 +62,7 @@ namespace Nito.Async
         {
             get
             {
-                return booleanTrue;
-            }
-        }
-
-        /// <summary>
-        /// A <see cref="Task"/> that will never complete.
-        /// </summary>
-        public static Task Never
-        {
-            get
-            {
-                return TaskConstants<bool>.Never;
+                return Task.CompletedTask;
             }
         }
 
@@ -83,7 +73,7 @@ namespace Nito.Async
         {
             get
             {
-                return TaskConstants<bool>.Canceled;
+                return TaskConstants<object>.Canceled;
             }
         }
     }
@@ -96,16 +86,7 @@ namespace Nito.Async
     {
         private static readonly Task<T> defaultValue = Task.FromResult(default(T));
 
-        private static readonly Task<T> never = new TaskCompletionSource<T>().Task;
-
-        private static readonly Task<T> canceled = CanceledTask();
-
-        private static Task<T> CanceledTask()
-        {
-            var tcs = new TaskCompletionSource<T>();
-            tcs.SetCanceled();
-            return tcs.Task;
-        }
+        private static readonly Task<T> canceled = Task.FromCanceled<T>(new CancellationToken(true));
 
         /// <summary>
         /// A task that has been completed with the default value of <typeparamref name="T"/>.
@@ -115,17 +96,6 @@ namespace Nito.Async
             get
             {
                 return defaultValue;
-            }
-        }
-
-        /// <summary>
-        /// A <see cref="Task"/> that will never complete.
-        /// </summary>
-        public static Task<T> Never
-        {
-            get
-            {
-                return never;
             }
         }
 
