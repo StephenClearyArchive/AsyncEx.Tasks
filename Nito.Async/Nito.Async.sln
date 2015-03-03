@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.22609.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BC7CC3DD-D397-484C-80AD-D220DA2A26AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{395C3147-784D-4194-8111-38EE23E8042F}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nito.Async.CoordinationPrimitives", "src\Nito.Async.CoordinationPrimitives\Nito.Async.CoordinationPrimitives.kproj", "{530CF156-31F2-433D-96A7-181E8E10AA2E}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nito.Deque", "src\Nito.Deque\Nito.Deque.kproj", "{83983561-B471-4D13-97C4-B0F37D50AD9B}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nito.Async.Tasks", "src\Nito.Async.Tasks\Nito.Async.Tasks.kproj", "{A59E8416-844C-4489-9761-3A5F0BDD6A46}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{530CF156-31F2-433D-96A7-181E8E10AA2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{530CF156-31F2-433D-96A7-181E8E10AA2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{530CF156-31F2-433D-96A7-181E8E10AA2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{530CF156-31F2-433D-96A7-181E8E10AA2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83983561-B471-4D13-97C4-B0F37D50AD9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83983561-B471-4D13-97C4-B0F37D50AD9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83983561-B471-4D13-97C4-B0F37D50AD9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83983561-B471-4D13-97C4-B0F37D50AD9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A59E8416-844C-4489-9761-3A5F0BDD6A46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A59E8416-844C-4489-9761-3A5F0BDD6A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A59E8416-844C-4489-9761-3A5F0BDD6A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A59E8416-844C-4489-9761-3A5F0BDD6A46}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{530CF156-31F2-433D-96A7-181E8E10AA2E} = {BC7CC3DD-D397-484C-80AD-D220DA2A26AA}
+		{83983561-B471-4D13-97C4-B0F37D50AD9B} = {BC7CC3DD-D397-484C-80AD-D220DA2A26AA}
+		{A59E8416-844C-4489-9761-3A5F0BDD6A46} = {BC7CC3DD-D397-484C-80AD-D220DA2A26AA}
+	EndGlobalSection
+EndGlobal
