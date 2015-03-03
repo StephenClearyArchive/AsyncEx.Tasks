@@ -8,7 +8,7 @@ namespace Nito.Async
     /// <summary>
     /// A task completion source that forces task continuations to execute asynchronously. All members are fully threadsafe.
     /// </summary>
-    internal sealed class AsyncTaskSource<T>
+    public sealed class AsyncTaskSource<T>
     {
         /// <summary>
         /// The underlying task completion source.
