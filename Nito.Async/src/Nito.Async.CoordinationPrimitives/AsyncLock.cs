@@ -135,16 +135,13 @@ namespace Nito.Async
         /// </summary>
         internal void ReleaseLock()
         {
-            IDisposable finish = null;
             lock (_mutex)
             {
                 if (_queue.IsEmpty)
                     _taken = false;
                 else
-                    finish = _queue.Dequeue(_cachedKeyTask.Result);
+                    _queue.Dequeue(_cachedKeyTask.Result);
             }
-            if (finish != null)
-                finish.Dispose();
         }
 
         /// <summary>
