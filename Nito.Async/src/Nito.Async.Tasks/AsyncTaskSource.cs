@@ -21,7 +21,11 @@ namespace Nito.Async
         /// </summary>
         public AsyncTaskSource()
         {
+#if ASPNET50
+            _tcs = new TaskCompletionSource<T>(TaskCreationOptions.DenyChildAttach);
+#else
             _tcs = new TaskCompletionSource<T>(TaskCreationOptions.DenyChildAttach | TaskCreationOptions.RunContinuationsAsynchronously);
+#endif
         }
 
         /// <summary>
@@ -35,7 +39,12 @@ namespace Nito.Async
         /// <param name="result">The result value for the task.</param>
         public bool TrySetResult(T result = default(T))
         {
+#if ASPNET50
+            System.Threading.Tasks.Task.Run(() => _tcs.TrySetResult(result));
+            return false;
+#else
             return _tcs.TrySetResult(result);
+#endif
         }
 
         /// <summary>
@@ -44,7 +53,12 @@ namespace Nito.Async
         /// <param name="exception">The exception for the task.</param>
         public bool TrySetException(Exception exception)
         {
+#if ASPNET50
+            System.Threading.Tasks.Task.Run(() => _tcs.TrySetException(exception));
+            return false;
+#else
             return _tcs.TrySetException(exception);
+#endif
         }
 
         /// <summary>
@@ -53,7 +67,12 @@ namespace Nito.Async
         /// <param name="exception">The exceptions for the task.</param>
         public bool TrySetException(IEnumerable<Exception> exceptions)
         {
+#if ASPNET50
+            System.Threading.Tasks.Task.Run(() => _tcs.TrySetException(exceptions));
+            return false;
+#else
             return _tcs.TrySetException(exceptions);
+#endif
         }
 
         /// <summary>
@@ -61,7 +80,12 @@ namespace Nito.Async
         /// </summary>
         public bool TrySetCanceled()
         {
+#if ASPNET50
+            System.Threading.Tasks.Task.Run(() => _tcs.TrySetCanceled());
+            return false;
+#else
             return _tcs.TrySetCanceled();
+#endif
         }
 
         /// <summary>
@@ -70,7 +94,12 @@ namespace Nito.Async
         /// <param name="cancellationToken">The cancellation token for the task.</param>
         public bool TrySetCanceled(CancellationToken cancellationToken)
         {
+#if ASPNET50
+            System.Threading.Tasks.Task.Run(() => _tcs.TrySetCanceled());
+            return false;
+#else
             return _tcs.TrySetCanceled(cancellationToken);
+#endif
         }
 
         /// <summary>
@@ -88,6 +117,13 @@ namespace Nito.Async
                 {
                     task.WaitAndUnwrapException();
                 }
+#if ASPNET50
+                catch (OperationCanceledException)
+                {
+                    System.Threading.Tasks.Task.Run(() => _tcs.TrySetCanceled());
+                    return false;
+                }
+#else
                 catch (OperationCanceledException exception)
                 {
                     var token = exception.CancellationToken;
@@ -95,6 +131,7 @@ namespace Nito.Async
                         token = new CancellationToken(true);
                     return _tcs.TrySetCanceled(token);
                 }
+#endif
             }
             return _tcs.TrySetResult(task.Result);
         }
@@ -115,6 +152,13 @@ namespace Nito.Async
                 {
                     task.WaitAndUnwrapException();
                 }
+#if ASPNET50
+                catch (OperationCanceledException)
+                {
+                    System.Threading.Tasks.Task.Run(() => _tcs.TrySetCanceled());
+                    return false;
+                }
+#else
                 catch (OperationCanceledException exception)
                 {
                     var token = exception.CancellationToken;
@@ -122,6 +166,7 @@ namespace Nito.Async
                         token = new CancellationToken(true);
                     return _tcs.TrySetCanceled(token);
                 }
+#endif
             }
             return _tcs.TrySetResult(result);
         }

@@ -1,13 +1,18 @@
 {
-    "version": "1.0.0-*",
+    "version": "1.0.0-alpha-*",
+    "authors": [ "Stephen Cleary" ],
     "dependencies": {
     },
 
+    "compilationOptions": {
+        "warningsAsErrors": true
+    },
+
     "frameworks": {
-        //"aspnet50": {
-        //    "dependencies": {
-        //    }
-        //},
+        "aspnet50": {
+            "dependencies": {
+            }
+        },
         "aspnetcore50": {
             "dependencies": {
                 "System.Runtime": "4.0.20-beta-22523",
