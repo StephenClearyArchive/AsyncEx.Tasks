@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nito.Async.Synchronous;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -110,7 +111,7 @@ namespace Nito.Async
                 enqueuedTask = _queue.Enqueue(_mutex, cancellationToken);
             }
 
-            return enqueuedTask.GetAwaiter().GetResult();
+            return enqueuedTask.WaitAndUnwrapException();
         }
 
         /// <summary>

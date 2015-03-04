@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Nito.Async.Synchronous;
 
 namespace Nito.Async
 {
@@ -136,13 +137,13 @@ namespace Nito.Async
             _asyncLock.ReleaseLock();
 
             // Wait for the signal or cancellation.
-            try { enqueuedTask.GetAwaiter().GetResult(); } catch (OperationCanceledException) { }
+            enqueuedTask.WaitWithoutException();
 
             // Re-take the lock.
             _asyncLock.Lock();
 
             // Propagate the cancellation exception if necessary.
-            enqueuedTask.GetAwaiter().GetResult();
+            enqueuedTask.WaitAndUnwrapException();
         }
 
         /// <summary>

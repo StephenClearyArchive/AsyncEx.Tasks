@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nito.Async.Synchronous;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -105,7 +106,7 @@ namespace Nito.Async
         /// <param name="cancellationToken">The cancellation token used to cancel the wait. If this is already set, then this method will attempt to take the slot immediately (succeeding if a slot is currently available).</param>
         public void Wait(CancellationToken cancellationToken)
         {
-            WaitAsync(cancellationToken).GetAwaiter().GetResult();
+            WaitAsync(cancellationToken).WaitAndUnwrapException();
         }
 
         /// <summary>

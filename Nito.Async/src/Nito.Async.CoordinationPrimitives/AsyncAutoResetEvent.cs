@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Nito.Async.Synchronous;
 
 // Original idea by Stephen Toub: http://blogs.msdn.com/b/pfxteam/archive/2012/02/11/10266923.aspx
 
@@ -120,7 +121,7 @@ namespace Nito.Async
                 ret = _queue.Enqueue(_mutex, cancellationToken);
             }
 
-            ret.GetAwaiter().GetResult();
+            ret.WaitAndUnwrapException();
         }
 
         /// <summary>

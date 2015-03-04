@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nito.Async.Synchronous;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace Nito.Async
         /// Attempts to complete the task with the specified result value. Returns <c>false</c> if the task is already completed.
         /// </summary>
         /// <param name="result">The result value for the task.</param>
-        public bool TrySetResult(T result)
+        public bool TrySetResult(T result = default(T))
         {
             return _tcs.TrySetResult(result);
         }
@@ -70,6 +71,59 @@ namespace Nito.Async
         public bool TrySetCanceled(CancellationToken cancellationToken)
         {
             return _tcs.TrySetCanceled(cancellationToken);
+        }
+
+        /// <summary>
+        /// Attempts to complete the task, propagating the completion of <paramref name="task"/>. Returns <c>false</c> if the task is already completed.
+        /// </summary>
+        /// <typeparam name="TSourceResult">The type of the result of the source asynchronous operation.</typeparam>
+        /// <param name="task">The task. May not be <c>null</c>.</param>
+        public bool TryCompleteFromCompletedTask<TSourceResult>(Task<TSourceResult> task) where TSourceResult : T
+        {
+            if (task.IsFaulted)
+                return _tcs.TrySetException(task.Exception.InnerExceptions);
+            if (task.IsCanceled)
+            {
+                try
+                {
+                    task.WaitAndUnwrapException();
+                }
+                catch (OperationCanceledException exception)
+                {
+                    var token = exception.CancellationToken;
+                    if (!token.IsCancellationRequested)
+                        token = new CancellationToken(true);
+                    return _tcs.TrySetCanceled(token);
+                }
+            }
+            return _tcs.TrySetResult(task.Result);
+        }
+
+        /// <summary>
+        /// Attempts to complete the task, propagating the completion of <paramref name="task"/>. Returns <c>false</c> if the task is already completed.
+        /// </summary>
+        /// <typeparam name="TSourceResult">The type of the result of the source asynchronous operation.</typeparam>
+        /// <param name="task">The task. May not be <c>null</c>.</param>
+        /// <param name="result">The result value for the task.</param>
+        public bool TryCompleteFromCompletedTask(Task task, T result)
+        {
+            if (task.IsFaulted)
+                return _tcs.TrySetException(task.Exception.InnerExceptions);
+            if (task.IsCanceled)
+            {
+                try
+                {
+                    task.WaitAndUnwrapException();
+                }
+                catch (OperationCanceledException exception)
+                {
+                    var token = exception.CancellationToken;
+                    if (!token.IsCancellationRequested)
+                        token = new CancellationToken(true);
+                    return _tcs.TrySetCanceled(token);
+                }
+            }
+            return _tcs.TrySetResult(result);
         }
     }
 }
