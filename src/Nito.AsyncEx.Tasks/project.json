@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0-alpha-1",
+    "version": "1.0.0-alpha-2",
     "authors": [ "Stephen Cleary" ],
     "dependencies": {
     },
@@ -9,6 +9,7 @@
     },
 
     "frameworks": {
+        "net46": { },
         "aspnetcore50": {
             "dependencies": {
                 "System.Runtime": "4.0.20-beta-22523",
