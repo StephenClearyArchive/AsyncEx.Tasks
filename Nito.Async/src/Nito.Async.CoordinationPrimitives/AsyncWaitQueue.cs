@@ -7,10 +7,8 @@ using Nito.Collections;
 
 namespace Nito.Async
 {
-    // TODO: determine if we can remove the "threadsafe" restriction, and always treat these as under lock.
-
     /// <summary>
-    /// A collection of cancelable <see cref="TaskCompletionSource{T}"/> instances. Implementations must be threadsafe <b>and</b> must work correctly if the caller is holding a lock.
+    /// A collection of cancelable <see cref="TaskCompletionSource{T}"/> instances. Implementations must assume the caller is holding a lock.
     /// </summary>
     /// <typeparam name="T">The type of the results. If this isn't needed, use <see cref="Object"/>.</typeparam>
     public interface IAsyncWaitQueue<T>
@@ -95,7 +93,7 @@ namespace Nito.Async
 
         private int Count
         {
-            get { lock (_queue) { return _queue.Count; } }
+            get { return _queue.Count; }
         }
 
         bool IAsyncWaitQueue<T>.IsEmpty
@@ -106,51 +104,40 @@ namespace Nito.Async
         Task<T> IAsyncWaitQueue<T>.Enqueue()
         {
             var tcs = new AsyncTaskSource<T>();
-            lock (_queue)
-                _queue.AddToBack(tcs);
+            _queue.AddToBack(tcs);
             return tcs.Task;
         }
 
         void IAsyncWaitQueue<T>.Dequeue(T result)
         {
-            lock (_queue)
-                _queue.RemoveFromFront().TrySetResult(result);
+            _queue.RemoveFromFront().TrySetResult(result);
         }
 
         void IAsyncWaitQueue<T>.DequeueAll(T result)
         {
-            lock (_queue)
-            {
-                foreach (var source in _queue)
-                    source.TrySetResult(result);
-                _queue.Clear();
-            }
+            foreach (var source in _queue)
+                source.TrySetResult(result);
+            _queue.Clear();
         }
 
         void IAsyncWaitQueue<T>.TryCancel(Task task, CancellationToken cancellationToken)
         {
-            lock (_queue)
+            for (int i = 0; i != _queue.Count; ++i)
             {
-                for (int i = 0; i != _queue.Count; ++i)
+                if (_queue[i].Task == task)
                 {
-                    if (_queue[i].Task == task)
-                    {
-                        _queue[i].TrySetCanceled(cancellationToken);
-                        _queue.RemoveAt(i);
-                        break;
-                    }
+                    _queue[i].TrySetCanceled(cancellationToken);
+                    _queue.RemoveAt(i);
+                    break;
                 }
             }
         }
 
         void IAsyncWaitQueue<T>.CancelAll(CancellationToken cancellationToken)
         {
-            lock (_queue)
-            {
-                foreach (var source in _queue)
-                    source.TrySetCanceled(cancellationToken);
-                _queue.Clear();
-            }
+            foreach (var source in _queue)
+                source.TrySetCanceled(cancellationToken);
+            _queue.Clear();
         }
 
         [DebuggerNonUserCode]
