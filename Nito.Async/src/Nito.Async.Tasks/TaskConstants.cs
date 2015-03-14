@@ -62,11 +62,7 @@ namespace Nito.Async
         {
             get
             {
-#if ASPNET50
-                return TaskConstants<object>.Default;
-#else
                 return Task.CompletedTask;
-#endif
             }
         }
 
@@ -89,18 +85,7 @@ namespace Nito.Async
     public static class TaskConstants<T>
     {
         private static readonly Task<T> defaultValue = Task.FromResult(default(T));
-
-#if ASPNET50
-        private static readonly Task<T> canceled = CreateCanceledTask();
-        private static Task<T> CreateCanceledTask()
-        {
-            var tcs = new TaskCompletionSource<T>();
-            tcs.SetCanceled();
-            return tcs.Task;
-        }
-#else
         private static readonly Task<T> canceled = Task.FromCanceled<T>(new CancellationToken(true));
-#endif
 
         /// <summary>
         /// A task that has been completed with the default value of <typeparamref name="T"/>.
