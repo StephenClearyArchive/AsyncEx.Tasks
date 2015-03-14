@@ -620,7 +620,7 @@ namespace Nito.Async
                 }
 
                 _asyncReaderWriterLock.ReleaseWaitersWhenCanceled(_upgrade);
-                var ret = new AsyncTaskSource<IDisposable>();
+                var ret = TaskCompletionSourceExtensions.CreateAsyncTaskSource<IDisposable>();
                 _upgrade.ContinueWith(t =>
                 {
                     if (t.IsCanceled)
@@ -653,13 +653,13 @@ namespace Nito.Async
                 }
 
                 _asyncReaderWriterLock.ReleaseWaitersWhenCanceled(_upgrade);
-                var ret = new AsyncTaskSource<IDisposable>();
+                var ret = TaskCompletionSourceExtensions.CreateAsyncTaskSource<IDisposable>();
                 _upgrade.ContinueWith(t =>
                 {
                     if (t.IsCanceled)
                         lock (_asyncReaderWriterLock.SyncObject) { _upgrade = null; }
                     ret.TryCompleteFromCompletedTask(t);
-                }, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+                }, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default); // TODO: is synchronous execution required here?
                 return ret.Task.WaitAndUnwrapException();
             }
 

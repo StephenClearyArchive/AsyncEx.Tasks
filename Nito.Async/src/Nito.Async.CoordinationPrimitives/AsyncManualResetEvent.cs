@@ -22,7 +22,7 @@ namespace Nito.Async
         /// <summary>
         /// The current state of the event.
         /// </summary>
-        private AsyncTaskSource<object> _tcs;
+        private TaskCompletionSource<object> _tcs;
 
         /// <summary>
         /// The semi-unique identifier for this instance. This is 0 if the id has not yet been created.
@@ -45,7 +45,7 @@ namespace Nito.Async
         public AsyncManualResetEvent(bool set)
         {
             _sync = new object();
-            _tcs = new AsyncTaskSource<object>();
+            _tcs = TaskCompletionSourceExtensions.CreateAsyncTaskSource<object>();
             if (set)
                 _tcs.TrySetResult(null);
         }
@@ -136,7 +136,7 @@ namespace Nito.Async
             lock (_sync)
             {
                 if (_tcs.Task.IsCompleted)
-                    _tcs = new AsyncTaskSource<object>();
+                    _tcs = TaskCompletionSourceExtensions.CreateAsyncTaskSource<object>();
             }
         }
 

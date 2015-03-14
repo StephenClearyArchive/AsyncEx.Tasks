@@ -89,7 +89,7 @@ namespace Nito.Async
     [DebuggerTypeProxy(typeof(DefaultAsyncWaitQueue<>.DebugView))]
     public sealed class DefaultAsyncWaitQueue<T> : IAsyncWaitQueue<T>
     {
-        private readonly Deque<AsyncTaskSource<T>> _queue = new Deque<AsyncTaskSource<T>>();
+        private readonly Deque<TaskCompletionSource<T>> _queue = new Deque<TaskCompletionSource<T>>();
 
         private int Count
         {
@@ -103,7 +103,7 @@ namespace Nito.Async
 
         Task<T> IAsyncWaitQueue<T>.Enqueue()
         {
-            var tcs = new AsyncTaskSource<T>();
+            var tcs = TaskCompletionSourceExtensions.CreateAsyncTaskSource<T>();
             _queue.AddToBack(tcs);
             return tcs.Task;
         }
