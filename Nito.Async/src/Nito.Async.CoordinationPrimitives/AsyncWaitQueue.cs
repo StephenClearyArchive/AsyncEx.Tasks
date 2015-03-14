@@ -25,26 +25,26 @@ namespace Nito.Async
         Task<T> Enqueue();
 
         /// <summary>
-        /// Removes a single entry in the wait queue and completes it.
+        /// Removes a single entry in the wait queue and completes it. The task continuations for the completed task must be executed asynchronously.
         /// </summary>
         /// <param name="result">The result used to complete the wait queue entry. If this isn't needed, use <c>default(T)</c>.</param>
         void Dequeue(T result = default(T));
 
         /// <summary>
-        /// Removes all entries in the wait queue and completes them.
+        /// Removes all entries in the wait queue and completes them. The task continuations for the completed tasks must be executed asynchronously.
         /// </summary>
         /// <param name="result">The result used to complete the wait queue entries. If this isn't needed, use <c>default(T)</c>.</param>
         void DequeueAll(T result = default(T));
 
         /// <summary>
-        /// Attempts to remove an entry from the wait queue and cancels it.
+        /// Attempts to remove an entry from the wait queue and cancels it. The task continuations for the completed task must be executed asynchronously.
         /// </summary>
         /// <param name="task">The task to cancel.</param>
         /// <param name="cancellationToken">The cancellation token to use to cancel the task.</param>
         bool TryCancel(Task task, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Removes all entries from the wait queue and cancels them.
+        /// Removes all entries from the wait queue and cancels them. The task continuations for the completed tasks must be executed asynchronously.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token to use to cancel the tasks.</param>
         void CancelAll(CancellationToken cancellationToken);
