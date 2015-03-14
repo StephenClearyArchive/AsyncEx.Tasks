@@ -41,7 +41,7 @@ namespace Nito.Async
         /// </summary>
         /// <param name="task">The task to cancel.</param>
         /// <param name="cancellationToken">The cancellation token to use to cancel the task.</param>
-        void TryCancel(Task task, CancellationToken cancellationToken);
+        bool TryCancel(Task task, CancellationToken cancellationToken);
 
         /// <summary>
         /// Removes all entries from the wait queue and cancels them.
@@ -120,7 +120,7 @@ namespace Nito.Async
             _queue.Clear();
         }
 
-        void IAsyncWaitQueue<T>.TryCancel(Task task, CancellationToken cancellationToken)
+        bool IAsyncWaitQueue<T>.TryCancel(Task task, CancellationToken cancellationToken)
         {
             for (int i = 0; i != _queue.Count; ++i)
             {
@@ -128,9 +128,10 @@ namespace Nito.Async
                 {
                     _queue[i].TrySetCanceled(cancellationToken);
                     _queue.RemoveAt(i);
-                    break;
+                    return true;
                 }
             }
+            return false;
         }
 
         void IAsyncWaitQueue<T>.CancelAll(CancellationToken cancellationToken)

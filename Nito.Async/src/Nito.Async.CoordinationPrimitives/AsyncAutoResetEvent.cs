@@ -104,32 +104,20 @@ namespace Nito.Async
         }
 
         /// <summary>
-        /// Synchronously waits for this event to be set. If the event is set, this method will auto-reset it and return immediately, even if the cancellation token is already signalled. If the wait is canceled, then it will not auto-reset this event. This method may block the calling thread.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token used to cancel this wait.</param>
-        public void Wait(CancellationToken cancellationToken)
-        {
-            Task ret;
-            lock (_mutex)
-            {
-                if (_set)
-                {
-                    _set = false;
-                    return;
-                }
-
-                ret = _queue.Enqueue(_mutex, cancellationToken);
-            }
-
-            ret.WaitAndUnwrapException();
-        }
-
-        /// <summary>
         /// Asynchronously waits for this event to be set. If the event is set, this method will auto-reset it and return immediately.
         /// </summary>
         public Task WaitAsync()
         {
             return WaitAsync(CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Synchronously waits for this event to be set. If the event is set, this method will auto-reset it and return immediately, even if the cancellation token is already signalled. If the wait is canceled, then it will not auto-reset this event. This method may block the calling thread.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel this wait.</param>
+        public void Wait(CancellationToken cancellationToken)
+        {
+            WaitAsync(cancellationToken).WaitAndUnwrapException();
         }
 
         /// <summary>

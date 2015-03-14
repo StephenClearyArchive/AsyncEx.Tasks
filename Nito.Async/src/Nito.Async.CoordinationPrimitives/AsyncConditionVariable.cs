@@ -121,6 +121,14 @@ namespace Nito.Async
         }
 
         /// <summary>
+        /// Asynchronously waits for a signal on this condition variable. The associated lock MUST be held when calling this method, and it will still be held when this method returns.
+        /// </summary>
+        public Task WaitAsync()
+        {
+            return WaitAsync(CancellationToken.None);
+        }
+
+        /// <summary>
         /// Synchronously waits for a signal on this condition variable. This method may block the calling thread. The associated lock MUST be held when calling this method, and it will still be held when this method returns, even if the method is cancelled.
         /// </summary>
         /// <param name="cancellationToken">The cancellation signal used to cancel this wait.</param>
@@ -144,14 +152,6 @@ namespace Nito.Async
 
             // Propagate the cancellation exception if necessary.
             enqueuedTask.WaitAndUnwrapException();
-        }
-
-        /// <summary>
-        /// Asynchronously waits for a signal on this condition variable. The associated lock MUST be held when calling this method, and it will still be held when this method returns.
-        /// </summary>
-        public Task WaitAsync()
-        {
-            return WaitAsync(CancellationToken.None);
         }
 
         /// <summary>

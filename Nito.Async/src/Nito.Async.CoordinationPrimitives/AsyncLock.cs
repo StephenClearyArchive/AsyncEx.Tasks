@@ -94,6 +94,15 @@ namespace Nito.Async
         }
 
         /// <summary>
+        /// Asynchronously acquires the lock. Returns a disposable that releases the lock when disposed.
+        /// </summary>
+        /// <returns>A disposable that releases the lock when disposed.</returns>
+        public AwaitableDisposable<IDisposable> LockAsync()
+        {
+            return LockAsync(CancellationToken.None);
+        }
+
+        /// <summary>
         /// Synchronously acquires the lock. Returns a disposable that releases the lock when disposed. This method may block the calling thread.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token used to cancel the lock. If this is already set, then this method will attempt to take the lock immediately (succeeding if the lock is currently available).</param>
@@ -112,15 +121,6 @@ namespace Nito.Async
             }
 
             return enqueuedTask.WaitAndUnwrapException();
-        }
-
-        /// <summary>
-        /// Asynchronously acquires the lock. Returns a disposable that releases the lock when disposed.
-        /// </summary>
-        /// <returns>A disposable that releases the lock when disposed.</returns>
-        public AwaitableDisposable<IDisposable> LockAsync()
-        {
-            return LockAsync(CancellationToken.None);
         }
 
         /// <summary>

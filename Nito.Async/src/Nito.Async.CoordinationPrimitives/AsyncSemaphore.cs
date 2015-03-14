@@ -5,14 +5,12 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-// TODO: Add CancellationToken overloads for all operations, even non-state-changing ones. Because it's not easy to do it right.
-
 // Original idea from Stephen Toub: http://blogs.msdn.com/b/pfxteam/archive/2012/02/12/10266983.aspx
 
 namespace Nito.Async
 {
     /// <summary>
-    /// An async-compatible semaphore. Alternatively, you could use <c>SemaphoreSlim</c> on .NET 4.5 / Windows Store.
+    /// An async-compatible semaphore. Alternatively, you could use <c>SemaphoreSlim</c>.
     /// </summary>
     [DebuggerDisplay("Id = {Id}, CurrentCount = {_count}")]
     [DebuggerTypeProxy(typeof(DebugView))]
@@ -101,20 +99,20 @@ namespace Nito.Async
         }
 
         /// <summary>
+        /// Asynchronously waits for a slot in the semaphore to be available.
+        /// </summary>
+        public Task WaitAsync()
+        {
+            return WaitAsync(CancellationToken.None);
+        }
+
+        /// <summary>
         /// Synchronously waits for a slot in the semaphore to be available. This method may block the calling thread.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token used to cancel the wait. If this is already set, then this method will attempt to take the slot immediately (succeeding if a slot is currently available).</param>
         public void Wait(CancellationToken cancellationToken)
         {
             WaitAsync(cancellationToken).WaitAndUnwrapException();
-        }
-
-        /// <summary>
-        /// Asynchronously waits for a slot in the semaphore to be available.
-        /// </summary>
-        public Task WaitAsync()
-        {
-            return WaitAsync(CancellationToken.None);
         }
 
         /// <summary>

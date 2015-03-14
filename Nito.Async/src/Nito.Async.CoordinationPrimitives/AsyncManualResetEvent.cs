@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Nito.Async.Synchronous;
 
 // Original idea by Stephen Toub: http://blogs.msdn.com/b/pfxteam/archive/2012/02/11/10266920.aspx
 
@@ -101,7 +102,7 @@ namespace Nito.Async
         /// </summary>
         public void Wait()
         {
-            WaitAsync().Wait();
+            WaitAsync().WaitAndUnwrapException();
         }
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace Nito.Async
             var ret = WaitAsync();
             if (ret.IsCompleted)
                 return;
-            ret.Wait(cancellationToken);
+            ret.WaitAndUnwrapException(cancellationToken);
         }
 
         /// <summary>

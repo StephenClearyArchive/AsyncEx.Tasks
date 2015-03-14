@@ -57,21 +57,21 @@ namespace Nito.Async
         }
 
         /// <summary>
-        /// Synchronously enters the monitor. Returns a disposable that leaves the monitor when disposed. This method may block the calling thread.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token used to cancel the enter. If this is already set, then this method will attempt to enter the monitor immediately (succeeding if the monitor is currently available).</param>
-        public IDisposable Enter(CancellationToken cancellationToken)
-        {
-            return _asyncLock.Lock(cancellationToken);
-        }
-
-        /// <summary>
         /// Asynchronously enters the monitor. Returns a disposable that leaves the monitor when disposed.
         /// </summary>
         /// <returns>A disposable that leaves the monitor when disposed.</returns>
         public AwaitableDisposable<IDisposable> EnterAsync()
         {
             return EnterAsync(CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Synchronously enters the monitor. Returns a disposable that leaves the monitor when disposed. This method may block the calling thread.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel the enter. If this is already set, then this method will attempt to enter the monitor immediately (succeeding if the monitor is currently available).</param>
+        public IDisposable Enter(CancellationToken cancellationToken)
+        {
+            return _asyncLock.Lock(cancellationToken);
         }
 
         /// <summary>
@@ -92,20 +92,20 @@ namespace Nito.Async
         }
 
         /// <summary>
+        /// Asynchronously waits for a pulse signal on this monitor. The monitor MUST already be entered when calling this method, and it will still be entered when this method returns. This method internally will leave the monitor while waiting for a notification.
+        /// </summary>
+        public Task WaitAsync()
+        {
+            return WaitAsync(CancellationToken.None);
+        }
+
+        /// <summary>
         /// Asynchronously waits for a pulse signal on this monitor. This method may block the calling thread. The monitor MUST already be entered when calling this method, and it will still be entered when this method returns, even if the method is cancelled. This method internally will leave the monitor while waiting for a notification.
         /// </summary>
         /// <param name="cancellationToken">The cancellation signal used to cancel this wait.</param>
         public void Wait(CancellationToken cancellationToken)
         {
             _conditionVariable.Wait(cancellationToken);
-        }
-
-        /// <summary>
-        /// Asynchronously waits for a pulse signal on this monitor. The monitor MUST already be entered when calling this method, and it will still be entered when this method returns. This method internally will leave the monitor while waiting for a notification.
-        /// </summary>
-        public Task WaitAsync()
-        {
-            return WaitAsync(CancellationToken.None);
         }
 
         /// <summary>
