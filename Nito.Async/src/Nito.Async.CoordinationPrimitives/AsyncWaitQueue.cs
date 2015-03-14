@@ -59,10 +59,10 @@ namespace Nito.Async
         /// Creates a new entry and queues it to this wait queue. If the cancellation token is already canceled, this method immediately returns a canceled task without modifying the wait queue.
         /// </summary>
         /// <param name="this">The wait queue.</param>
-        /// <param name="syncObject">A synchronization object taken while cancelling the entry.</param>
+        /// <param name="mutex">A synchronization object taken while cancelling the entry.</param>
         /// <param name="token">The token used to cancel the wait.</param>
         /// <returns>The queued task.</returns>
-        public static Task<T> Enqueue<T>(this IAsyncWaitQueue<T> @this, object syncObject, CancellationToken token)
+        public static Task<T> Enqueue<T>(this IAsyncWaitQueue<T> @this, object mutex, CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return Task.FromCanceled<T>(token);
@@ -73,7 +73,7 @@ namespace Nito.Async
 
             var registration = token.Register(() =>
             {
-                lock (syncObject)
+                lock (mutex)
                     @this.TryCancel(ret, token);
             }, useSynchronizationContext: false);
             ret.ContinueWith(_ => registration.Dispose(), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);

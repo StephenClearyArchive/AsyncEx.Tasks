@@ -17,7 +17,7 @@ namespace Nito.Async
         /// <summary>
         /// The object used for synchronization.
         /// </summary>
-        private readonly object _sync;
+        private readonly object _mutex;
 
         /// <summary>
         /// The current state of the event.
@@ -44,7 +44,7 @@ namespace Nito.Async
         /// <param name="set">Whether the manual-reset event is initially set or unset.</param>
         public AsyncManualResetEvent(bool set)
         {
-            _sync = new object();
+            _mutex = new object();
             _tcs = TaskCompletionSourceExtensions.CreateAsyncTaskSource<object>();
             if (set)
                 _tcs.TrySetResult(null);
@@ -71,7 +71,7 @@ namespace Nito.Async
         /// </summary>
         public bool IsSet
         {
-            get { lock (_sync) return _tcs.Task.IsCompleted; }
+            get { lock (_mutex) return _tcs.Task.IsCompleted; }
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Nito.Async
         /// </summary>
         public Task WaitAsync()
         {
-            lock (_sync)
+            lock (_mutex)
             {
                 return _tcs.Task;
             }
@@ -122,7 +122,7 @@ namespace Nito.Async
         /// </summary>
         public void Set()
         {
-            lock (_sync)
+            lock (_mutex)
             {
                 _tcs.TrySetResult(null);
             }
@@ -133,7 +133,7 @@ namespace Nito.Async
         /// </summary>
         public void Reset()
         {
-            lock (_sync)
+            lock (_mutex)
             {
                 if (_tcs.Task.IsCompleted)
                     _tcs = TaskCompletionSourceExtensions.CreateAsyncTaskSource<object>();
