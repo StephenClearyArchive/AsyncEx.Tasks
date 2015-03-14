@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Nito.Async
+namespace Nito.AsyncEx
 {
     /// <summary>
     /// The source (controller) of a "pause token", which can be used to cooperatively pause and unpause operations.

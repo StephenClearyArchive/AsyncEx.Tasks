@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Nito.Async
+namespace Nito.AsyncEx
 {
     /// <summary>
     /// An async-compatible monitor.

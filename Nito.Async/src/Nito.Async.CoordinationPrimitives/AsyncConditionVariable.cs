@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Nito.Async.Synchronous;
+using Nito.AsyncEx.Synchronous;
 
-namespace Nito.Async
+namespace Nito.AsyncEx
 {
     /// <summary>
     /// An async-compatible condition variable. This type uses Mesa-style semantics (the notifying tasks do not yield).

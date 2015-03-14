@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Nito.Async.Synchronous;
+using Nito.AsyncEx.Synchronous;
 
 // Original idea by Stephen Toub: http://blogs.msdn.com/b/pfxteam/archive/2012/02/11/10266920.aspx
 
-namespace Nito.Async
+namespace Nito.AsyncEx
 {
     /// <summary>
     /// An async-compatible manual-reset event.

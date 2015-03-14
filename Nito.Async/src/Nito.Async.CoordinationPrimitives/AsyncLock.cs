@@ -1,12 +1,12 @@
-﻿using Nito.Async.Synchronous;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Nito.AsyncEx.Synchronous;
 
 // Original idea from Stephen Toub: http://blogs.msdn.com/b/pfxteam/archive/2012/02/12/10266988.aspx
 
-namespace Nito.Async
+namespace Nito.AsyncEx
 {
     /// <summary>
     /// A mutual exclusion lock that is compatible with async. Note that this lock is <b>not</b> recursive!

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nito.Collections;
 
-namespace Nito.Async
+namespace Nito.AsyncEx
 {
     /// <summary>
     /// A collection of cancelable <see cref="TaskCompletionSource{T}"/> instances. Implementations must assume the caller is holding a lock.

@@ -3,7 +3,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Nito.Async.Synchronous
+namespace Nito.AsyncEx.Synchronous
 {
     /// <summary>
     /// Provides synchronous extension methods for tasks.

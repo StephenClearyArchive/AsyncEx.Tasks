@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Nito.Async
+namespace Nito.AsyncEx
 {
     /// <summary>
     /// Holds the task for a cancellation token, as well as the token registration. The registration is disposed when this instance is disposed.

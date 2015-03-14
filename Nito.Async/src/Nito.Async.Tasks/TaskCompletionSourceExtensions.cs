@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Threading.Tasks;
-using Nito.Async.Synchronous;
-using System.Threading;
+using Nito.AsyncEx.Synchronous;
 
-namespace Nito.Async
+namespace Nito.AsyncEx
 {
     /// <summary>
     /// Provides extension methods for <see cref="TaskCompletionSource{TResult}"/>.

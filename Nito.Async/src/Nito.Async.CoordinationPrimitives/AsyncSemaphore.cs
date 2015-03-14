@@ -1,13 +1,12 @@
-﻿using Nito.Async.Synchronous;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Nito.AsyncEx.Synchronous;
 
 // Original idea from Stephen Toub: http://blogs.msdn.com/b/pfxteam/archive/2012/02/12/10266983.aspx
 
-namespace Nito.Async
+namespace Nito.AsyncEx
 {
     /// <summary>
     /// An async-compatible semaphore. Alternatively, you could use <c>SemaphoreSlim</c>.
