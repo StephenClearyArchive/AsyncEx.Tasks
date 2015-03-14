@@ -22,7 +22,7 @@ namespace Nito.Async
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                Task = TaskConstants.Canceled;
+                Task = Task.FromCanceled(cancellationToken);
                 return;
             }
             var tcs = new TaskCompletionSource<object>(TaskCreationOptions.DenyChildAttach);

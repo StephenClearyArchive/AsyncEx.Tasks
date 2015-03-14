@@ -65,7 +65,7 @@ namespace Nito.Async
         public static Task<T> Enqueue<T>(this IAsyncWaitQueue<T> @this, object syncObject, CancellationToken token)
         {
             if (token.IsCancellationRequested)
-                return TaskConstants<T>.Canceled;
+                return Task.FromCanceled<T>(token);
 
             var ret = @this.Enqueue();
             if (!token.CanBeCanceled)
