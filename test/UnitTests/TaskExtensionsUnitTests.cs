@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
+using Nito.AsyncEx.Testing;
 
 namespace UnitTests
 {
@@ -21,7 +22,7 @@ namespace UnitTests
         public void WaitAndUnwrapException_Faulted_UnwrapsException()
         {
             var task = Task.Run(() => { throw new NotImplementedException(); });
-            AssertEx.ThrowsException<NotImplementedException>(() => task.WaitAndUnwrapException());
+            AsyncAssert.Throws<NotImplementedException>(() => task.WaitAndUnwrapException());
         }
 
         [Fact]
@@ -36,7 +37,7 @@ namespace UnitTests
         {
             var cts = new CancellationTokenSource();
             var task = Task.Run(() => { throw new NotImplementedException(); });
-            AssertEx.ThrowsException<NotImplementedException>(() => task.WaitAndUnwrapException(cts.Token));
+            AsyncAssert.Throws<NotImplementedException>(() => task.WaitAndUnwrapException(cts.Token));
         }
 
         [Fact]
@@ -46,7 +47,7 @@ namespace UnitTests
             Task task = tcs.Task;
             var cts = new CancellationTokenSource();
             cts.Cancel();
-            AssertEx.ThrowsException<OperationCanceledException>(() => task.WaitAndUnwrapException(cts.Token));
+            AsyncAssert.Throws<OperationCanceledException>(() => task.WaitAndUnwrapException(cts.Token));
         }
 
         [Fact]
@@ -59,7 +60,7 @@ namespace UnitTests
         public void WaitAndUnwrapExceptionResult_Faulted_UnwrapsException()
         {
             var task = Task.Run((Func<int>)(() => { throw new NotImplementedException(); }));
-            AssertEx.ThrowsException<NotImplementedException>(() => task.WaitAndUnwrapException(), allowDerivedTypes: false);
+            AsyncAssert.Throws<NotImplementedException>(() => task.WaitAndUnwrapException(), allowDerivedTypes: false);
         }
 
         [Fact]
@@ -74,7 +75,7 @@ namespace UnitTests
         {
             var cts = new CancellationTokenSource();
             var task = Task.Run((Func<int>)(() => { throw new NotImplementedException(); }));
-            AssertEx.ThrowsException<NotImplementedException>(() => task.WaitAndUnwrapException(cts.Token), allowDerivedTypes: false);
+            AsyncAssert.Throws<NotImplementedException>(() => task.WaitAndUnwrapException(cts.Token), allowDerivedTypes: false);
         }
 
         [Fact]
@@ -83,7 +84,7 @@ namespace UnitTests
             var tcs = new TaskCompletionSource<int>();
             var cts = new CancellationTokenSource();
             cts.Cancel();
-            AssertEx.ThrowsException<OperationCanceledException>(() => tcs.Task.WaitAndUnwrapException(cts.Token));
+            AsyncAssert.Throws<OperationCanceledException>(() => tcs.Task.WaitAndUnwrapException(cts.Token));
         }
 
         [Fact]
@@ -168,7 +169,7 @@ namespace UnitTests
             Task task = new TaskCompletionSource<object>().Task;
             var cts = new CancellationTokenSource();
             cts.Cancel();
-            AssertEx.ThrowsException<OperationCanceledException>(() => task.WaitWithoutException(cts.Token));
+            AsyncAssert.Throws<OperationCanceledException>(() => task.WaitWithoutException(cts.Token));
         }
 
         [Fact]
@@ -180,7 +181,7 @@ namespace UnitTests
             var result = task.Wait(500);
             Assert.False(result);
             cts.Cancel();
-            await AssertEx.ThrowsExceptionAsync<OperationCanceledException>(() => task);
+            await AsyncAssert.ThrowsAsync<OperationCanceledException>(() => task);
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using Xunit;
+using Nito.AsyncEx.Testing;
 
 namespace UnitTests
 {
@@ -34,7 +35,7 @@ namespace UnitTests
         {
             var tcs = new TaskCompletionSource<int>();
             tcs.TryCompleteFromCompletedTask(TaskConstants<int>.Canceled);
-            await AssertEx.ThrowsExceptionAsync<OperationCanceledException>(() => tcs.Task);
+            await AsyncAssert.ThrowsAsync<OperationCanceledException>(() => tcs.Task);
         }
 
         [Fact]
@@ -45,7 +46,7 @@ namespace UnitTests
 
             var tcs = new TaskCompletionSource<int>();
             tcs.TryCompleteFromCompletedTask(source.Task);
-            await AssertEx.ThrowsExceptionAsync<NotImplementedException>(() => tcs.Task);
+            await AsyncAssert.ThrowsAsync<NotImplementedException>(() => tcs.Task);
         }
     }
 }

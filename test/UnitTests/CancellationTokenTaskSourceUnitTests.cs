@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Nito.AsyncEx;
 using System.Linq;
 using System.Threading;
-using System.Diagnostics.CodeAnalysis;
+using Nito.AsyncEx.Testing;
 using Xunit;
 
 namespace UnitTests
@@ -39,7 +39,7 @@ namespace UnitTests
 
             cts.Cancel();
 
-            await AssertEx.ThrowsExceptionAsync<OperationCanceledException>(task);
+            await AsyncAssert.ThrowsAsync<OperationCanceledException>(task);
         }
     }
 }
