@@ -25,7 +25,7 @@ namespace Nito.AsyncEx
                 Task = Task.FromCanceled(cancellationToken);
                 return;
             }
-            var tcs = new TaskCompletionSource<object>(TaskCreationOptions.DenyChildAttach);
+            var tcs = new TaskCompletionSource<object>();
             _registration = cancellationToken.Register(() => tcs.TrySetCanceled(), useSynchronizationContext: false);
             Task = tcs.Task;
         }
