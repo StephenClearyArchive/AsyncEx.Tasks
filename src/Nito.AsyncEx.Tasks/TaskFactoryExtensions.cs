@@ -9,7 +9,7 @@ namespace Nito.AsyncEx
     public static class TaskFactoryExtensions
     {
         /// <summary>
-        /// Queues work to the task factory and returns a <see cref="Task"/> representing that work.
+        /// Queues work to the task factory and returns a <see cref="Task"/> representing that work. If the task factory does not specify a task scheduler, the thread pool task scheduler is used.
         /// </summary>
         /// <param name="this">The <see cref="TaskFactory"/>. May not be <c>null</c>.</param>
         /// <param name="action">The action delegate to execute. May not be <c>null</c>.</param>
@@ -20,7 +20,7 @@ namespace Nito.AsyncEx
         }
 
         /// <summary>
-        /// Queues work to the task factory and returns a <see cref="Task{TResult}"/> representing that work.
+        /// Queues work to the task factory and returns a <see cref="Task{TResult}"/> representing that work. If the task factory does not specify a task scheduler, the thread pool task scheduler is used.
         /// </summary>
         /// <param name="this">The <see cref="TaskFactory"/>. May not be <c>null</c>.</param>
         /// <param name="action">The action delegate to execute. May not be <c>null</c>.</param>
@@ -31,7 +31,7 @@ namespace Nito.AsyncEx
         }
 
         /// <summary>
-        /// Queues work to the task factory and returns a proxy <see cref="Task"/> representing that work.
+        /// Queues work to the task factory and returns a proxy <see cref="Task"/> representing that work. If the task factory does not specify a task scheduler, the thread pool task scheduler is used.
         /// </summary>
         /// <param name="this">The <see cref="TaskFactory"/>. May not be <c>null</c>.</param>
         /// <param name="action">The action delegate to execute. May not be <c>null</c>.</param>
@@ -42,7 +42,7 @@ namespace Nito.AsyncEx
         }
 
         /// <summary>
-        /// Queues work to the task factory and returns a proxy <see cref="Task{TResult}"/> representing that work.
+        /// Queues work to the task factory and returns a proxy <see cref="Task{TResult}"/> representing that work. If the task factory does not specify a task scheduler, the thread pool task scheduler is used.
         /// </summary>
         /// <param name="this">The <see cref="TaskFactory"/>. May not be <c>null</c>.</param>
         /// <param name="action">The action delegate to execute. May not be <c>null</c>.</param>
