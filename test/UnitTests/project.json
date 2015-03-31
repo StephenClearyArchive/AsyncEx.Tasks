@@ -15,8 +15,9 @@
     },
 
     "frameworks" : {
-        "aspnet50" : { 
+        "net46" : { 
             "dependencies": {
+                "System.Runtime": "4.0.20-beta-22523"
             }
         },
         "aspnetcore50" : { 

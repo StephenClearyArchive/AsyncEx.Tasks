@@ -37,14 +37,14 @@ namespace Nito.AsyncEx
         }
 
         /// <summary>
-        /// Attempts to complete a <see cref="TaskCompletionSource{TResult}"/>, propagating the completion of <paramref name="task"/> but using the result value <paramref name="result"/> if the task completed successfully.
+        /// Attempts to complete a <see cref="TaskCompletionSource{TResult}"/>, propagating the completion of <paramref name="task"/> but using the result value from <paramref name="resultFunc"/> if the task completed successfully.
         /// </summary>
         /// <typeparam name="TResult">The type of the result of the target asynchronous operation.</typeparam>
         /// <param name="this">The task completion source. May not be <c>null</c>.</param>
         /// <param name="task">The task. May not be <c>null</c>.</param>
-        /// <param name="result">The result with which to complete the task completion source, if the task completed successfully.</param>
+        /// <param name="resultFunc">A delegate that returns the result with which to complete the task completion source, if the task completed successfully.</param>
         /// <returns><c>true</c> if this method completed the task completion source; <c>false</c> if it was already completed.</returns>
-        public static bool TryCompleteFromCompletedTask<TResult>(this TaskCompletionSource<TResult> @this, Task task, TResult result)
+        public static bool TryCompleteFromCompletedTask<TResult>(this TaskCompletionSource<TResult> @this, Task task, Func<TResult> resultFunc)
         {
             if (task.IsFaulted)
                 return @this.TrySetException(task.Exception.InnerExceptions);
@@ -60,7 +60,7 @@ namespace Nito.AsyncEx
                     return token.IsCancellationRequested ? @this.TrySetCanceled(token) : @this.TrySetCanceled();
                 }
             }
-            return @this.TrySetResult(result);
+            return @this.TrySetResult(resultFunc());
         }
 
         /// <summary>

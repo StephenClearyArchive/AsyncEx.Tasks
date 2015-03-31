@@ -1,187 +1,227 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
-using Nito.AsyncEx.Synchronous;
 using System.Linq;
 using System.Threading;
-using System.Diagnostics.CodeAnalysis;
-using Xunit;
 using Nito.AsyncEx.Testing;
+using Xunit;
 
 namespace UnitTests
 {
     public class TaskExtensionsUnitTests
     {
         [Fact]
-        public void WaitAndUnwrapException_Completed_DoesNotBlock()
-        {
-            TaskConstants.Completed.WaitAndUnwrapException();
-        }
-
-        [Fact]
-        public void WaitAndUnwrapException_Faulted_UnwrapsException()
-        {
-            var task = Task.Run(() => { throw new NotImplementedException(); });
-            AsyncAssert.Throws<NotImplementedException>(() => task.WaitAndUnwrapException());
-        }
-
-        [Fact]
-        public void WaitAndUnwrapExceptionWithCT_Completed_DoesNotBlock()
-        {
-            var cts = new CancellationTokenSource();
-            TaskConstants.Completed.WaitAndUnwrapException(cts.Token);
-        }
-
-        [Fact]
-        public void WaitAndUnwrapExceptionWithCT_Faulted_UnwrapsException()
-        {
-            var cts = new CancellationTokenSource();
-            var task = Task.Run(() => { throw new NotImplementedException(); });
-            AsyncAssert.Throws<NotImplementedException>(() => task.WaitAndUnwrapException(cts.Token));
-        }
-
-        [Fact]
-        public void WaitAndUnwrapExceptionWithCT_CancellationTokenCancelled_Cancels()
+        public void WaitAsyncTResult_TokenThatCannotCancel_ReturnsSourceTask()
         {
             var tcs = new TaskCompletionSource<object>();
-            Task task = tcs.Task;
+            var task = tcs.Task.WaitAsync(CancellationToken.None);
+
+            Assert.Same(tcs.Task, task);
+        }
+
+        [Fact]
+        public void WaitAsyncTResult_AlreadyCanceledToken_ReturnsSynchronouslyCanceledTask()
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var token = new CancellationToken(true);
+            var task = tcs.Task.WaitAsync(token);
+
+            Assert.True(task.IsCanceled);
+            Assert.Equal(token, GetCancellationTokenFromTask(task));
+        }
+
+        [Fact]
+        public async Task WaitAsyncTResult_TokenCanceled_CancelsTask()
+        {
+            var tcs = new TaskCompletionSource<object>();
             var cts = new CancellationTokenSource();
+            var task = tcs.Task.WaitAsync(cts.Token);
+            Assert.False(task.IsCompleted);
+
             cts.Cancel();
-            AsyncAssert.Throws<OperationCanceledException>(() => task.WaitAndUnwrapException(cts.Token));
+
+            await AsyncAssert.ThrowsAsync<OperationCanceledException>(task);
+            Assert.Equal(cts.Token, GetCancellationTokenFromTask(task));
         }
 
         [Fact]
-        public void WaitAndUnwrapExceptionResult_Completed_DoesNotBlock()
+        public void WaitAsync_TokenThatCannotCancel_ReturnsSourceTask()
         {
-            TaskConstants.Int32Zero.WaitAndUnwrapException();
+            var tcs = new TaskCompletionSource<object>();
+            var task = ((Task)tcs.Task).WaitAsync(CancellationToken.None);
+
+            Assert.Same(tcs.Task, task);
         }
 
         [Fact]
-        public void WaitAndUnwrapExceptionResult_Faulted_UnwrapsException()
+        public void WaitAsync_AlreadyCanceledToken_ReturnsSynchronouslyCanceledTask()
         {
-            var task = Task.Run((Func<int>)(() => { throw new NotImplementedException(); }));
-            AsyncAssert.Throws<NotImplementedException>(() => task.WaitAndUnwrapException(), allowDerivedTypes: false);
+            var tcs = new TaskCompletionSource<object>();
+            var token = new CancellationToken(true);
+            var task = ((Task)tcs.Task).WaitAsync(token);
+
+            Assert.True(task.IsCanceled);
+            Assert.Equal(token, GetCancellationTokenFromTask(task));
         }
 
         [Fact]
-        public void WaitAndUnwrapExceptionResultWithCT_Completed_DoesNotBlock()
+        public async Task WaitAsync_TokenCanceled_CancelsTask()
         {
+            var tcs = new TaskCompletionSource<object>();
             var cts = new CancellationTokenSource();
-            TaskConstants.Int32Zero.WaitAndUnwrapException(cts.Token);
-        }
+            var task = ((Task)tcs.Task).WaitAsync(cts.Token);
+            Assert.False(task.IsCompleted);
 
-        [Fact]
-        public void WaitAndUnwrapExceptionResultWithCT_Faulted_UnwrapsException()
-        {
-            var cts = new CancellationTokenSource();
-            var task = Task.Run((Func<int>)(() => { throw new NotImplementedException(); }));
-            AsyncAssert.Throws<NotImplementedException>(() => task.WaitAndUnwrapException(cts.Token), allowDerivedTypes: false);
-        }
-
-        [Fact]
-        public void WaitAndUnwrapExceptionResultWithCT_CancellationTokenCancelled_Cancels()
-        {
-            var tcs = new TaskCompletionSource<int>();
-            var cts = new CancellationTokenSource();
             cts.Cancel();
-            AsyncAssert.Throws<OperationCanceledException>(() => tcs.Task.WaitAndUnwrapException(cts.Token));
+
+            await AsyncAssert.ThrowsAsync<OperationCanceledException>(task);
+            Assert.Equal(cts.Token, GetCancellationTokenFromTask(task));
         }
 
         [Fact]
-        public void WaitWithoutException_Completed_DoesNotBlock()
+        public void WhenAnyTResult_AlreadyCanceledToken_ReturnsSynchronouslyCanceledTask()
         {
-            TaskConstants.Completed.WaitWithoutException();
+            var tcs = new TaskCompletionSource<object>();
+            var token = new CancellationToken(true);
+            var task = new[] { tcs.Task }.WhenAny(token);
+
+            Assert.True(task.IsCanceled);
+            Assert.Equal(token, GetCancellationTokenFromTask(task));
         }
 
         [Fact]
-        public void WaitWithoutException_Canceled_DoesNotBlockOrThrow()
+        public async Task WhenAnyTResult_TaskCompletes_CompletesTask()
         {
-            TaskConstants.Canceled.WaitWithoutException();
-        }
-
-        [Fact]
-        public void WaitWithoutException_Faulted_DoesNotBlockOrThrow()
-        {
-            var task = Task.Run(() => { throw new NotImplementedException(); });
-            task.WaitWithoutException();
-        }
-
-        [Fact]
-        public void WaitWithoutExceptionResult_Completed_DoesNotBlock()
-        {
-            TaskConstants.Int32Zero.WaitWithoutException();
-        }
-
-        [Fact]
-        public void WaitWithoutExceptionResult_Canceled_DoesNotBlockOrThrow()
-        {
-            TaskConstants<int>.Canceled.WaitWithoutException();
-        }
-
-        [Fact]
-        public void WaitWithoutExceptionResult_Faulted_DoesNotBlockOrThrow()
-        {
-            var task = Task.Run((Func<int>)(() => { throw new NotImplementedException(); }));
-            task.WaitWithoutException();
-        }
-
-        [Fact]
-        public void WaitWithoutExceptionWithCancellationToken_Completed_DoesNotBlock()
-        {
-            TaskConstants.Completed.WaitWithoutException(new CancellationToken());
-        }
-
-        [Fact]
-        public void WaitWithoutExceptionWithCancellationToken_Canceled_DoesNotBlockOrThrow()
-        {
-            TaskConstants.Canceled.WaitWithoutException(new CancellationToken());
-        }
-
-        [Fact]
-        public void WaitWithoutExceptionWithCancellationToken_Faulted_DoesNotBlockOrThrow()
-        {
-            var task = Task.Run(() => { throw new NotImplementedException(); });
-            task.WaitWithoutException(new CancellationToken());
-        }
-
-        [Fact]
-        public void WaitWithoutExceptionResultWithCancellationToken_Completed_DoesNotBlock()
-        {
-            TaskConstants.Int32Zero.WaitWithoutException(new CancellationToken());
-        }
-
-        [Fact]
-        public void WaitWithoutExceptionResultWithCancellationToken_Canceled_DoesNotBlockOrThrow()
-        {
-            TaskConstants<int>.Canceled.WaitWithoutException(new CancellationToken());
-        }
-
-        [Fact]
-        public void WaitWithoutExceptionResultWithCancellationToken_Faulted_DoesNotBlockOrThrow()
-        {
-            var task = Task.Run((Func<int>)(() => { throw new NotImplementedException(); }));
-            task.WaitWithoutException(new CancellationToken());
-        }
-
-        [Fact]
-        public void WaitWithoutExceptionWithCancellationToken_CanceledToken_DoesNotBlockButThrowsException()
-        {
-            Task task = new TaskCompletionSource<object>().Task;
+            var tcs = new TaskCompletionSource<object>();
             var cts = new CancellationTokenSource();
-            cts.Cancel();
-            AsyncAssert.Throws<OperationCanceledException>(() => task.WaitWithoutException(cts.Token));
+            var task = new[] { tcs.Task }.WhenAny(cts.Token);
+            Assert.False(task.IsCompleted);
+
+            tcs.SetResult(null);
+
+            var result = await task;
+            Assert.Same(tcs.Task, result);
         }
 
         [Fact]
-        public async Task WaitWithoutExceptionWithCancellationToken_TokenCanceled_ThrowsException()
+        public async Task WhenAnyTResult_TokenCanceled_CancelsTask()
         {
-            Task sourceTask = new TaskCompletionSource<object>().Task;
+            var tcs = new TaskCompletionSource<object>();
             var cts = new CancellationTokenSource();
-            var task = Task.Run(() => sourceTask.WaitWithoutException(cts.Token));
-            var result = task.Wait(500);
-            Assert.False(result);
+            var task = new[] { tcs.Task }.WhenAny(cts.Token);
+            Assert.False(task.IsCompleted);
+
             cts.Cancel();
-            await AsyncAssert.ThrowsAsync<OperationCanceledException>(() => task);
+
+            await AsyncAssert.ThrowsAsync<OperationCanceledException>(task);
+            Assert.Equal(cts.Token, GetCancellationTokenFromTask(task));
+        }
+
+        [Fact]
+        public void WhenAny_AlreadyCanceledToken_ReturnsSynchronouslyCanceledTask()
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var token = new CancellationToken(true);
+            var task = new Task[] { tcs.Task }.WhenAny(token);
+
+            Assert.True(task.IsCanceled);
+            Assert.Equal(token, GetCancellationTokenFromTask(task));
+        }
+
+        [Fact]
+        public async Task WhenAny_TaskCompletes_CompletesTask()
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var cts = new CancellationTokenSource();
+            var task = new Task[] { tcs.Task }.WhenAny(cts.Token);
+            Assert.False(task.IsCompleted);
+
+            tcs.SetResult(null);
+
+            var result = await task;
+            Assert.Same(tcs.Task, result);
+        }
+
+        [Fact]
+        public async Task WhenAny_TokenCanceled_CancelsTask()
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var cts = new CancellationTokenSource();
+            var task = new Task[] { tcs.Task }.WhenAny(cts.Token);
+            Assert.False(task.IsCompleted);
+
+            cts.Cancel();
+
+            await AsyncAssert.ThrowsAsync<OperationCanceledException>(task);
+            Assert.Equal(cts.Token, GetCancellationTokenFromTask(task));
+        }
+
+        [Fact]
+        public async Task WhenAnyTResultWithoutToken_TaskCompletes_CompletesTask()
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var task = new[] { tcs.Task }.WhenAny();
+            Assert.False(task.IsCompleted);
+
+            tcs.SetResult(null);
+
+            var result = await task;
+            Assert.Same(tcs.Task, result);
+        }
+
+        [Fact]
+        public async Task WhenAnyWithoutToken_TaskCompletes_CompletesTask()
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var task = new Task[] { tcs.Task }.WhenAny();
+            Assert.False(task.IsCompleted);
+
+            tcs.SetResult(null);
+
+            var result = await task;
+            Assert.Same(tcs.Task, result);
+        }
+
+        [Fact]
+        public async Task WhenAllTResult_TaskCompletes_CompletesTask()
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var task = new[] { tcs.Task }.WhenAll();
+            Assert.False(task.IsCompleted);
+
+            var expectedResult = new object();
+            tcs.SetResult(expectedResult);
+
+            var result = await task;
+            Assert.Equal(new[] { expectedResult }, result);
+        }
+
+        [Fact]
+        public async Task WhenAll_TaskCompletes_CompletesTask()
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var task = new Task[] { tcs.Task }.WhenAll();
+            Assert.False(task.IsCompleted);
+
+            var expectedResult = new object();
+            tcs.SetResult(expectedResult);
+
+            await task;
+        }
+
+        private static CancellationToken GetCancellationTokenFromTask(Task task)
+        {
+            try
+            {
+                task.Wait();
+            }
+            catch (AggregateException ex)
+            {
+                var oce = ex.InnerException as OperationCanceledException;
+                if (oce != null)
+                    return oce.CancellationToken;
+            }
+            return CancellationToken.None;
         }
     }
 }
