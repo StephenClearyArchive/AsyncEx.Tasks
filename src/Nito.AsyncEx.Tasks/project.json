@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-alpha-6",
+  "version": "1.0.0-beta-1",
   "authors": [ "Stephen Cleary" ],
   "dependencies": {
     "System.Threading.Tasks": "4.0.11-beta-23516"
