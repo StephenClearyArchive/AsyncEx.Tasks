@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-delta-1",
+  "version": "1.0.0-delta-2",
   "description": "Common helper methods for tasks as used in asynchronous programming.",
   "authors": [ "Stephen Cleary" ],
   "buildOptions": {
@@ -9,6 +9,11 @@
     "netstandard1.3": {
       "dependencies": {
         "System.Threading.Tasks": "4.0.11"
+      }
+    },
+    "net46": {
+      "frameworkAssemblies": {
+        "System.Threading.Tasks": ""
       }
     }
   }
