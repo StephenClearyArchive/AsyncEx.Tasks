@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-delta-2",
+  "version": "1.0.0-delta-3",
   "description": "Common helper methods for tasks as used in asynchronous programming.",
   "authors": [ "Stephen Cleary" ],
   "buildOptions": {
