@@ -3,7 +3,8 @@
   "description": "Common helper methods for tasks as used in asynchronous programming.",
   "authors": [ "Stephen Cleary" ],
   "buildOptions": {
-    "warningsAsErrors": true
+    "warningsAsErrors": true,
+    "xmlDoc": true
   },
   "frameworks": {
     "netstandard1.3": {
