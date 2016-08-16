@@ -1,10 +1,13 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Common helper methods for tasks as used in asynchronous programming.",
   "authors": [ "Stephen Cleary" ],
   "buildOptions": {
     "warningsAsErrors": true,
     "xmlDoc": true
+  },
+  "dependencies": {
+    "Nito.Disposables": "1.0.0"
   },
   "packOptions": {
     "tags": [ "task", "taskfactory", "cancellationtoken", "taskcompletionsource" ],
@@ -18,7 +21,6 @@
   "frameworks": {
     "netstandard1.3": {
       "dependencies": {
-        "System.Threading": "4.0.11",
         "System.Threading.Tasks": "4.0.11"
       }
     },
