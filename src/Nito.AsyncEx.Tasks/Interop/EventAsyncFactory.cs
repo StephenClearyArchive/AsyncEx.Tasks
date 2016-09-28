@@ -7,7 +7,7 @@ namespace Nito.AsyncEx.Interop
     /// <summary>
     /// Creation methods for tasks wrapping events.
     /// </summary>
-    public static class EventsAsyncFactory
+    public static class EventAsyncFactory
     {
         /// <summary>
         /// Returns a <see cref="Task{T}"/> that completes when a specified event next fires. This overload is for events that are of any type.

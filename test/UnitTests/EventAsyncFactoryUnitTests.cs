@@ -9,7 +9,7 @@ using Xunit;
 
 namespace UnitTests
 {
-    public class AsyncFactoryUnitTests
+    public class EventAsyncFactoryUnitTests
     {
         [Fact]
         public void CompilationTest_CommonScenarios()
@@ -18,22 +18,22 @@ namespace UnitTests
 
             // EventHandler
             Assert.Same(Typeof<Task<EventArguments<object, EventArgs>>>(), Typeof(
-                AsyncFactory.FromEvent(h => target.NongenericEventHandlerEvent += h, h => target.NongenericEventHandlerEvent -= h)
+                EventAsyncFactory.FromEvent(h => target.NongenericEventHandlerEvent += h, h => target.NongenericEventHandlerEvent -= h)
             ));
 
             // EventHandler<T>
             Assert.Same(Typeof<Task<EventArguments<object, int>>>(), Typeof(
-                AsyncFactory.FromEvent<int>(h => target.GenericEventHandlerEvent += h, h => target.GenericEventHandlerEvent -= h)
+                EventAsyncFactory.FromEvent<int>(h => target.GenericEventHandlerEvent += h, h => target.GenericEventHandlerEvent -= h)
             ));
 
             // Custom delegate type of the pattern `void TDelegate(object sender, TEventArgs eventArgs)`
             // E.g., PropertyChangedEventHandler (with PropertyChangedEventArgs)
             Assert.Same(Typeof<Task<EventArguments<object, PropertyChangedEventArgs>>>(), Typeof(
-                AsyncFactory.FromEvent<PropertyChangedEventHandler, PropertyChangedEventArgs>(d => d.Invoke, h => target.PropertyChangedEventHandlerEvent += h, h => target.PropertyChangedEventHandlerEvent -= h)
+                EventAsyncFactory.FromEvent<PropertyChangedEventHandler, PropertyChangedEventArgs>(d => d.Invoke, h => target.PropertyChangedEventHandlerEvent += h, h => target.PropertyChangedEventHandlerEvent -= h)
             ));
             // Alternatively:
             Assert.Same(Typeof<Task<EventArguments<object, PropertyChangedEventArgs>>>(), Typeof(
-                AsyncFactory.FromEvent((EventHandler<PropertyChangedEventArgs> d) => new PropertyChangedEventHandler(d), h => target.PropertyChangedEventHandlerEvent += h, h => target.PropertyChangedEventHandlerEvent -= h)
+                EventAsyncFactory.FromEvent((EventHandler<PropertyChangedEventArgs> d) => new PropertyChangedEventHandler(d), h => target.PropertyChangedEventHandlerEvent += h, h => target.PropertyChangedEventHandlerEvent -= h)
             ));
         }
 
@@ -44,17 +44,17 @@ namespace UnitTests
 
             // Action
             Assert.Same(Typeof<Task>(), Typeof(
-                AsyncFactory.FromActionEvent(h => target.ActionEvent += h, h => target.ActionEvent -= h)
+                EventAsyncFactory.FromActionEvent(h => target.ActionEvent += h, h => target.ActionEvent -= h)
             ));
 
             // Action<T>
             Assert.Same(Typeof<Task<int>>(), Typeof(
-                AsyncFactory.FromActionEvent<int>(h => target.ActionIntEvent += h, h => target.ActionIntEvent -= h)
+                EventAsyncFactory.FromActionEvent<int>(h => target.ActionIntEvent += h, h => target.ActionIntEvent -= h)
             ));
 
             // Action<TSender, T>
             Assert.Same(Typeof<Task<EventArguments<EventfulType, int>>>(), Typeof(
-                AsyncFactory.FromActionEvent<EventfulType, int>(h => target.ActionSenderIntEvent += h, h => target.ActionSenderIntEvent -= h)
+                EventAsyncFactory.FromActionEvent<EventfulType, int>(h => target.ActionSenderIntEvent += h, h => target.ActionSenderIntEvent -= h)
             ));
         }
 
@@ -65,12 +65,12 @@ namespace UnitTests
 
             // Custom delegate type (creating the "result type" inline - in this case a simple tuple)
             Assert.Same(Typeof<Task<Tuple<int, int, int, int>>>(), Typeof(
-                AsyncFactory.FromAnyEvent<Action<int, int, int, int>, Tuple<int, int, int, int>>(h => (a, b, c, d) => h(Tuple.Create(a, b, c, d)), h => target.CustomEvent += h, h => target.CustomEvent -= h)
+                EventAsyncFactory.FromAnyEvent<Action<int, int, int, int>, Tuple<int, int, int, int>>(h => (a, b, c, d) => h(Tuple.Create(a, b, c, d)), h => target.CustomEvent += h, h => target.CustomEvent -= h)
             ));
 
             // Custom delegate type with return value
             Assert.Same(Typeof<Task<Tuple<int, int, int>>>(), Typeof(
-                AsyncFactory.FromAnyEvent<Func<int, int, int, int>, Tuple<int, int, int>>(h => (a, b, c) =>
+                EventAsyncFactory.FromAnyEvent<Func<int, int, int, int>, Tuple<int, int, int>>(h => (a, b, c) =>
                 {
                     h(Tuple.Create(a, b, c));
                     return 13;
@@ -82,7 +82,7 @@ namespace UnitTests
         public async Task EventRaised_CompletesTaskWithData_NongenericEventHandler()
         {
             var target = new EventfulType();
-            var task = AsyncFactory.FromEvent(h => target.NongenericEventHandlerEvent += h, h => target.NongenericEventHandlerEvent -= h);
+            var task = EventAsyncFactory.FromEvent(h => target.NongenericEventHandlerEvent += h, h => target.NongenericEventHandlerEvent -= h);
             target.OnNongenericEventHandlerEvent();
             var result = await task;
             Assert.Same(target, result.Sender);
@@ -93,7 +93,7 @@ namespace UnitTests
         public async Task EventRaised_CompletesTaskWithData_GenericEventHandler()
         {
             var target = new EventfulType();
-            var task = AsyncFactory.FromEvent<int>(h => target.GenericEventHandlerEvent += h, h => target.GenericEventHandlerEvent -= h);
+            var task = EventAsyncFactory.FromEvent<int>(h => target.GenericEventHandlerEvent += h, h => target.GenericEventHandlerEvent -= h);
             target.OnGenericEventHandlerEvent(13);
             var result = await task;
             Assert.Same(target, result.Sender);
@@ -104,7 +104,7 @@ namespace UnitTests
         public async Task EventRaised_CompletesTaskWithData_PropertyChangedEventHandler()
         {
             var target = new EventfulType();
-            var task = AsyncFactory.FromEvent<PropertyChangedEventHandler, PropertyChangedEventArgs>(d => d.Invoke, h => target.PropertyChangedEventHandlerEvent += h, h => target.PropertyChangedEventHandlerEvent -= h);
+            var task = EventAsyncFactory.FromEvent<PropertyChangedEventHandler, PropertyChangedEventArgs>(d => d.Invoke, h => target.PropertyChangedEventHandlerEvent += h, h => target.PropertyChangedEventHandlerEvent -= h);
             target.OnPropertyChangedEventHandlerEvent(new PropertyChangedEventArgs("bob"));
             var result = await task;
             Assert.Same(target, result.Sender);
@@ -115,7 +115,7 @@ namespace UnitTests
         public async Task EventRaised_CompletesTaskWithData_Action()
         {
             var target = new EventfulType();
-            var task = AsyncFactory.FromActionEvent(h => target.ActionEvent += h, h => target.ActionEvent -= h);
+            var task = EventAsyncFactory.FromActionEvent(h => target.ActionEvent += h, h => target.ActionEvent -= h);
             target.OnActionEvent();
             await task;
         }
@@ -124,7 +124,7 @@ namespace UnitTests
         public async Task EventRaised_CompletesTaskWithData_ActionInt()
         {
             var target = new EventfulType();
-            var task = AsyncFactory.FromActionEvent<int>(h => target.ActionIntEvent += h, h => target.ActionIntEvent -= h);
+            var task = EventAsyncFactory.FromActionEvent<int>(h => target.ActionIntEvent += h, h => target.ActionIntEvent -= h);
             target.OnActionIntEvent(17);
             var result = await task;
             Assert.Equal(17, result);
@@ -134,7 +134,7 @@ namespace UnitTests
         public async Task EventRaised_CompletesTaskWithData_ActionSenderInt()
         {
             var target = new EventfulType();
-            var task = AsyncFactory.FromActionEvent<EventfulType, int>(h => target.ActionSenderIntEvent += h, h => target.ActionSenderIntEvent -= h);
+            var task = EventAsyncFactory.FromActionEvent<EventfulType, int>(h => target.ActionSenderIntEvent += h, h => target.ActionSenderIntEvent -= h);
             target.OnActionSenderIntEvent(11);
             var result = await task;
             Assert.Same(target, result.Sender);
@@ -145,7 +145,7 @@ namespace UnitTests
         public async Task EventRaised_CompletesTaskWithData_Custom()
         {
             var target = new EventfulType();
-            var task = AsyncFactory.FromAnyEvent<Action<int, int, int, int>, Tuple<int, int, int, int>>(h => (a, b, c, d) => h(Tuple.Create(a, b, c, d)), h => target.CustomEvent += h, h => target.CustomEvent -= h);
+            var task = EventAsyncFactory.FromAnyEvent<Action<int, int, int, int>, Tuple<int, int, int, int>>(h => (a, b, c, d) => h(Tuple.Create(a, b, c, d)), h => target.CustomEvent += h, h => target.CustomEvent -= h);
             target.OnCustomEvent(3, 5, 7, 23);
             var result = await task;
             Assert.Equal(3, result.Item1);
@@ -158,7 +158,7 @@ namespace UnitTests
         public async Task EventRaised_CompletesTaskWithData_CustomReturn()
         {
             var target = new EventfulType();
-            var task = AsyncFactory.FromAnyEvent<Func<int, int, int, int>, Tuple<int, int, int>>(h => (a, b, c) =>
+            var task = EventAsyncFactory.FromAnyEvent<Func<int, int, int, int>, Tuple<int, int, int>>(h => (a, b, c) =>
             {
                 h(Tuple.Create(a, b, c));
                 return 13;
