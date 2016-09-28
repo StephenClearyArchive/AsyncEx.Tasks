@@ -40,8 +40,7 @@ namespace Nito.AsyncEx
         /// </summary>
         public void Dispose()
         {
-            if (_registration != null)
-                _registration.Dispose();
+            _registration?.Dispose();
         }
     }
 }
