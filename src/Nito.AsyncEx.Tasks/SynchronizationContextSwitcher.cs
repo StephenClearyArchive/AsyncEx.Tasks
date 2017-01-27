@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Nito.AsyncEx
 {
@@ -33,11 +34,23 @@ namespace Nito.AsyncEx
         }
 
         /// <summary>
-        /// Removes the current <see cref="SynchronizationContext"/> and restores it when the returned disposable is disposed.
+        /// Executes a synchronous delegate without the current <see cref="SynchronizationContext"/>. The current context is restored when this function returns.
         /// </summary>
-        public static IDisposable NoContext()
+        /// <param name="action">The delegate to execute.</param>
+        public static void NoContext(Action action)
         {
-            return new SynchronizationContextSwitcher(null);
+            using (new SynchronizationContextSwitcher(null))
+                action();
+        }
+
+        /// <summary>
+        /// Executes an asynchronous delegate without the current <see cref="SynchronizationContext"/>. The current context is restored when this function returns its task.
+        /// </summary>
+        /// <param name="action">The delegate to execute.</param>
+        public static Task NoContextAsync(Func<Task> action)
+        {
+            using (new SynchronizationContextSwitcher(null))
+                return action();
         }
     }
 }
