@@ -19,12 +19,11 @@ namespace Nito.AsyncEx.Interop
         public static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state)
         {
             var tcs = new TaskCompletionSource<object>(state, TaskCreationOptions.RunContinuationsAsynchronously);
-            using (SynchronizationContextSwitcher.NoContext())
-                CompleteAsync(task, callback, tcs);
+            SynchronizationContextSwitcher.NoContext(() => CompleteAsync(task, callback, tcs));
             return tcs.Task;
         }
 
-		// `async void` is on purpose, to raise `callback` exceptions directly on the thread pool.
+        // `async void` is on purpose, to raise `callback` exceptions directly on the thread pool.
         private static async void CompleteAsync(Task task, AsyncCallback callback, TaskCompletionSource<object> tcs)
         {
             try
@@ -66,12 +65,11 @@ namespace Nito.AsyncEx.Interop
         public static IAsyncResult ToBegin<TResult>(Task<TResult> task, AsyncCallback callback, object state)
         {
             var tcs = new TaskCompletionSource<TResult>(state, TaskCreationOptions.RunContinuationsAsynchronously);
-			using (SynchronizationContextSwitcher.NoContext())
-				CompleteAsync(task, callback, tcs);
+            SynchronizationContextSwitcher.NoContext(() => CompleteAsync(task, callback, tcs));
             return tcs.Task;
         }
 
-		// `async void` is on purpose, to raise `callback` exceptions directly on the thread pool.
+        // `async void` is on purpose, to raise `callback` exceptions directly on the thread pool.
         private static async void CompleteAsync<TResult>(Task<TResult> task, AsyncCallback callback, TaskCompletionSource<TResult> tcs)
         {
             try
