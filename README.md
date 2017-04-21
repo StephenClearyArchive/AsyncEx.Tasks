@@ -1,4 +1,4 @@
-# AsyncEx.Tasks [![AppVeyor](https://img.shields.io/appveyor/ci/StephenCleary/AsyncEx-Tasks.svg?style=plastic)](https://ci.appveyor.com/project/StephenCleary/AsyncEx-Tasks) [![Coveralls](https://img.shields.io/coveralls/StephenCleary/AsyncEx.Tasks.svg?style=plastic)](https://coveralls.io/r/StephenCleary/AsyncEx.Coordination)
+# AsyncEx.Tasks
 
 Basic task-based helpers for asynchronous code.
 
