@@ -1,3 +1,7 @@
+# NOTE
+
+This project is now part of the [AsyncEx project](https://github.com/StephenCleary/AsyncEx).
+
 # AsyncEx.Tasks
 
 Basic task-based helpers for asynchronous code.
